@@ -101,7 +101,7 @@ def signature_detection(selection):
     return latest_detection + YOLO_OP # return the yolo op folder
 
 def select_document():
-  return "/Users/margertf/Desktop/hackathon_signature/signer/Streamlit_App/media/documents/3.png"
+    return "media/documents/1.png"
 #     '''
 #         Selects the document from the dropdown menu and displays the image.
 #         Returns an integer represeting the id of the document selected.
@@ -128,7 +128,7 @@ def main():
     # st.write('Deep Learning based Signature Detection and Verification')
     # st.write('Built by [Amal Joseph](https://www.linkedin.com/in/amaljoseph/)')
     # st.write('[Github Repo](https://github.com/amaljoseph)')
-    print("here")
+    
     
     # Sets the session variable to store the document selected by the user.
     doc = select_document()
@@ -139,7 +139,7 @@ def main():
     # if session_state.detect_button:
         # Performs Signature Detection task if the "Detect Signature" button is pressed.
     yolo_op = signature_detection(doc)
-    # signature_cleaning(doc, yolo_op)      
+    signature_cleaning(doc, yolo_op)      
     # signature_verify(session_state.selection)
 
 main()
