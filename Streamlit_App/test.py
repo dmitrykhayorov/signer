@@ -86,8 +86,10 @@ def signature_detection(selection):
 
     # call YOLOv5 detection fn on all images in the document folder.
     detect.detect(selection)
+
     # get the path where last detected results are stored.
     latest_detection = max(glob.glob(os.path.join(YOLO_RESULT, '*/')), key=os.path.getmtime)
+
     # resize and add top and bottom padding to detected sigantures. 
     # gan model expects ips in that particular format.
     gan_utils.resize_images(os.path.join(latest_detection, YOLO_OP))
@@ -126,18 +128,18 @@ def main():
     # st.write('Deep Learning based Signature Detection and Verification')
     # st.write('Built by [Amal Joseph](https://www.linkedin.com/in/amaljoseph/)')
     # st.write('[Github Repo](https://github.com/amaljoseph)')
-
+    print("here")
     
     # Sets the session variable to store the document selected by the user.
     doc = select_document()
-    
+
     # detect_button = st.button('Detect Signature')
     # if detect_button:
     #     session_state.detect_button = True
     # if session_state.detect_button:
         # Performs Signature Detection task if the "Detect Signature" button is pressed.
     yolo_op = signature_detection(doc)
-    signature_cleaning(doc, yolo_op)      
+    # signature_cleaning(doc, yolo_op)      
     # signature_verify(session_state.selection)
 
 main()
