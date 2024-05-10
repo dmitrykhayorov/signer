@@ -32,7 +32,6 @@ from SOURCE.gan_files.data import create_dataset
 from SOURCE.gan_files.models import create_model
 from SOURCE.gan_files.util.visualizer import save_images
 from SOURCE.gan_files.util import html
-import streamlit as st
 
 
 def clean():

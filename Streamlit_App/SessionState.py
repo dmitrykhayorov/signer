@@ -1,4 +1,4 @@
-from streamlit.report_thread import get_report_ctx
+from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
 import streamlit as st
 
 class SessionState(object):
@@ -55,6 +55,6 @@ def get(**kwargs):
     'Mary'
 
     """
-    ctx = get_report_ctx()
+    ctx = get_script_run_ctx()
     id = ctx.session_id
     return get_session(id, **kwargs)

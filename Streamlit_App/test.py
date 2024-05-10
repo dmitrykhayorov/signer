@@ -1,4 +1,4 @@
-import streamlit as st
+# import streamlit as st
 from PIL import Image
 import cv2
 import os
@@ -8,7 +8,6 @@ from SOURCE.vgg_finetuned_model import vgg_verify
 from helper_fns import gan_utils
 import shutil
 import glob
-import SessionState
 
 MEDIA_ROOT = 'media/documents/'
 SIGNATURE_ROOT = 'media/UserSignaturesSquare/'
@@ -65,27 +64,28 @@ def signature_verify(selection):
     anchor_image = SIGNATURE_ROOT + selection + '.png'
     # verify the anchor signature with the detctions on all documents
     feature_set = vgg_verify.verify(anchor_image, GAN_OP_RESIZED)
-    for image, score in feature_set:
-        columns = [column for column in st.columns(3)]
-        columns[0].image(anchor_image)
-        columns[1].image(image)
-        columns[2].write(score)
+    # for image, score in feature_set:
+    #     columns = [column for column in st.columns(3)]
+    #     columns[0].image(anchor_image)
+    #     columns[1].image(image)
+    #     columns[2].write(score)
 
 def signature_cleaning(selection, yolo_op):
     ''' Performs signature cleaning and displays the cleaned signatures '''
     # copy files from results/yolo_ops/ to results/gan/gan_signdata_kaggle/gan_ips
     copy_and_overwrite(yolo_op, GAN_IPS)
     test.clean() # performs cleaning
-
+  
     #cleaned images are selected and displayed
     cleaned_image = select_cleaned_image(selection)
-    st.image(cleaned_image)
+    # st.image(cleaned_image)
+    return cleaned_image 
 
 def signature_detection(selection):
     ''' Performs signature detection and returns the results folder. '''
 
     # call YOLOv5 detection fn on all images in the document folder.
-    detect.detect(MEDIA_ROOT)
+    detect.detect(selection)
     # get the path where last detected results are stored.
     latest_detection = max(glob.glob(os.path.join(YOLO_RESULT, '*/')), key=os.path.getmtime)
     # resize and add top and bottom padding to detected sigantures. 
@@ -93,61 +93,51 @@ def signature_detection(selection):
     gan_utils.resize_images(os.path.join(latest_detection, YOLO_OP))
 
     # selects and display the detections of the document which the user selected.
-    selection_detection =latest_detection + YOLO_OP + selection + '.jpg'
-    st.image(selection_detection)
+    # selection_detection =latest_detection + YOLO_OP + selection + '.jpg'
+    # st.image(selection_detection)
+    # print(latest_detection + YOLO_OP)
     return latest_detection + YOLO_OP # return the yolo op folder
 
 def select_document():
-    '''
-        Selects the document from the dropdown menu and displays the image.
-        Returns an integer represeting the id of the document selected.
-    '''
-    left, right = st.columns(2) # Create two columns
-    # dropdown box in left column
-    selection = str(left.selectbox('Select document to run inference', [1, 2]))
-    # select corresponding document image from media/documents
-    selection_image = MEDIA_ROOT+selection+'.png'
-    #display image in right column.
-    right.image(selection_image, use_column_width='always')
-    return selection
+  return "/Users/margertf/Desktop/hackathon_signature/signer/Streamlit_App/media/documents/3.png"
+#     '''
+#         Selects the document from the dropdown menu and displays the image.
+#         Returns an integer represeting the id of the document selected.
+#     '''
+#     left, right = st.columns(2) # Create two columns
+#     # dropdown box in left column
+#     selection = str(left.selectbox('Select document to run inference', [1, 2]))
+#     # select corresponding document image from media/documents
+#     selection_image = MEDIA_ROOT+selection+'.png'
+#     #display image in right column.
+#     right.image(selection_image, use_column_width='always')
+#     return selection
 
 def main():
     # Sets Streamlit state variables for persistant values.
-    session_state = SessionState.get(
-        selection = '',
-        yolo_op = '',
-        detect_button = False,
-        clean_button = False,
-        verify_button = False,
+    # session_state = SessionState.get(
+    #     selection = '',
+    #     yolo_op = '',
+    #     detect_button = False,
+    #     clean_button = False,
+    #     verify_button = False,
         
-    )
-    st.write('Deep Learning based Signature Detection and Verification')
-    st.write('Built by [Amal Joseph](https://www.linkedin.com/in/amaljoseph/)')
-    st.write('[Github Repo](https://github.com/amaljoseph)')
+    # )
+    # st.write('Deep Learning based Signature Detection and Verification')
+    # st.write('Built by [Amal Joseph](https://www.linkedin.com/in/amaljoseph/)')
+    # st.write('[Github Repo](https://github.com/amaljoseph)')
 
     
     # Sets the session variable to store the document selected by the user.
-    session_state.selection = select_document()
+    doc = select_document()
     
-    detect_button = st.button('Detect Signature')
-    if detect_button:
-        session_state.detect_button = True
-    if session_state.detect_button:
+    # detect_button = st.button('Detect Signature')
+    # if detect_button:
+    #     session_state.detect_button = True
+    # if session_state.detect_button:
         # Performs Signature Detection task if the "Detect Signature" button is pressed.
-        session_state.yolo_op = signature_detection(session_state.selection)
-        
-        clean_button = st.button('Clean Signature')
-        if clean_button:
-            session_state.clean_button = True
-        if session_state.clean_button:
-            # Performs Signature Cleaning task if the "Clean Signature" button is pressed.
-            signature_cleaning(session_state.selection, session_state.yolo_op)
-        
-            verify_button = st.button('Verify Signature')
-            if verify_button:
-                session_state.verify_button = True
-            if session_state.verify_button:
-                # Performs Signature Verification task if the "Verify Signature" button is pressed.
-                signature_verify(session_state.selection)
+    yolo_op = signature_detection(doc)
+    signature_cleaning(doc, yolo_op)      
+    # signature_verify(session_state.selection)
 
 main()
