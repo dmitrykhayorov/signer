@@ -34,7 +34,7 @@ def cosine_similarity_fn(anchor_image_feature, test_image_feature):
 
 def verify(anchor_image, gan_op):
     # loads the model and removes the last layer is removed
-    vgg_model = tf.keras.models.load_model('SOURCE/vgg_finetuned_model')
+    vgg_model = tf.keras.layers.TFSMLayer("SOURCE/vgg_finetuned_model")
     feature_extractor = tf.keras.Sequential(vgg_model.layers[:-1])
     
     feature_set = []

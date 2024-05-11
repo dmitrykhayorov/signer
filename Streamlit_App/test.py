@@ -64,12 +64,8 @@ def signature_verify(selection):
     anchor_image = SIGNATURE_ROOT + selection + '.png'
     # verify the anchor signature with the detctions on all documents
     feature_set = vgg_verify.verify(anchor_image, GAN_OP_RESIZED)
-    # for image, score in feature_set:
-    #     columns = [column for column in st.columns(3)]
-    #     columns[0].image(anchor_image)
-    #     columns[1].image(image)
-    #     columns[2].write(score)
-
+    for image, score in feature_set:
+       print(f"\n{image}: {score}\n") 
 def signature_cleaning(selection, yolo_op):
     ''' Performs signature cleaning and displays the cleaned signatures '''
     # copy files from results/yolo_ops/ to results/gan/gan_signdata_kaggle/gan_ips
@@ -101,7 +97,7 @@ def signature_detection(selection):
     return latest_detection + YOLO_OP # return the yolo op folder
 
 def select_document():
-    return "media/documents/1.png"
+    return "media/documents/5.jpg"
 #     '''
 #         Selects the document from the dropdown menu and displays the image.
 #         Returns an integer represeting the id of the document selected.
@@ -140,6 +136,6 @@ def main():
         # Performs Signature Detection task if the "Detect Signature" button is pressed.
     yolo_op = signature_detection(doc)
     signature_cleaning(doc, yolo_op)      
-    # signature_verify(session_state.selection)
+    signature_verify(doc)
 
 main()
