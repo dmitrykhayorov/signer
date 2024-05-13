@@ -8,6 +8,8 @@ from SOURCE.vgg_finetuned_model import vgg_verify
 from helper_fns import gan_utils
 import shutil
 import glob
+import argparse
+
 
 MEDIA_ROOT = 'media/documents/'
 SIGNATURE_ROOT = 'media/UserSignaturesSquare/'
@@ -35,31 +37,7 @@ def copy_and_overwrite(from_path, to_path):
 def signature_verify(selection):
     ''' Performs signature verification and displays the anchor image alongside 
         the detections from all the documents and their corresponding cosine 
-        similarity score.
-
-        For the demo, all three phases (signature detection, cleaning and 
-        verification) are performed on all the documents. The cleaned image of 
-        all documents are compared with the anchor image (the signature in the 
-        database corresponding to the document the user selected from the
-        dropdown) to demonstrate that matching pairs give a higher cosine 
-        similarity score and non-matching pairs produce a lower score.
-        Ideally, the anchor image should be selected from the "Account Name" and
-        "Signatory Name" returned by Vikas' module.
-
-        For POC, the motive is to show that matching signature pairs have a 
-        score close to 1 and non-matching signatures have a lower score (<0.7).
-        The logic used is a simple matching with filename.
-
-        So the index or id User Signatures are denoted by their file name.
-        Eg: User1's anchor signature in media/UserSignatureSquare will be named 
-        as 1.png.
-        For the sake of simplicity, I have matched the name of document in
-        similar logic.
-        Eg: Document 1 (media/documents/1.png) contains the signature of the 
-        user. 
-        The the signature to be compared with is selected on the basis of 
-        filename.
-        
+        similarity score. 
     '''
     anchor_image = SIGNATURE_ROOT + "1.png"
     # verify the anchor signature with the detctions on all documents
@@ -103,13 +81,33 @@ def select_document():
 
 
 def main():
-       
-    doc = select_document()
-
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--source_img", help="path to document image which should be verified", default="media/documents/1.png")
+  parser.add_argument("--detect", help="enable singature detection", action="store_true")
+  parser.add_argument("--clean", help="enable noise reduction", action="store_true")
+  parser.add_argument("--verify", help="enable verification of signature", action="store_true")
+  
+  args = parser.parse_args()  
+  
+  doc = args.source_image
+  # ADD default yolo_op path 
+  # yolo_op = 
+  if args.detect == True:
     yolo_op = signature_detection(doc)
-    
+  else:
+    print("detection is off, stopping pipeline")
+    return
+  
+  if args.clean == False:
+    print("cleaning is off, stopping pipeline")
+    return
+  else:
     signature_cleaning(doc, yolo_op)      
 
-    # signature_verify(doc)
+  if args.verify == False:
+    print("verification is off, stopping pipeline")
+    return
+  else:
+    signature_verify(doc)
 
 main()
