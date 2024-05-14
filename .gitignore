@@ -1,1 +1,7 @@
+#model artifacts
 *.pt
+*.keras
+
+# windows venv folders
+Scripts/
+Lib/
