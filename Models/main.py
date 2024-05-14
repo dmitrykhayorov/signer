@@ -82,14 +82,14 @@ def select_document():
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument("--source_img", help="path to document image which should be verified", default="media/documents/1.png")
+  parser.add_argument("--source", help="path to document image which should be verified", default="media/documents/1.png")
   parser.add_argument("--detect", help="enable singature detection", action="store_true")
   parser.add_argument("--clean", help="enable noise reduction", action="store_true")
   parser.add_argument("--verify", help="enable verification of signature", action="store_true")
   
   args = parser.parse_args()  
   
-  doc = args.source_image
+  doc = args.source
   # ADD default yolo_op path 
   # yolo_op = 
   if args.detect == True:
